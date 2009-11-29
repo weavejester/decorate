@@ -1,0 +1,44 @@
+<project name="decorate" default="jar">
+  <description>
+    Pack all build sources into a JAR. Compile those that can be compiled
+    standalone if the clojure.jar property points to clojure.jar.
+</description>
+
+  <available property="hasclojure" file="${clojure.jar}"/>
+  
+  <property name="build.dir" location="classes"/>
+  <property name="source.dir" location="src"/>
+  <property name="decorate.jar" location="decorate.jar"/>
+
+  <target name="clean" description="Remove generated files">
+    <delete file="${decorate.jar}"/>
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="init" depends="clean">
+    <tstamp/>
+    <mkdir dir="${build.dir}"/>
+  </target>
+
+  <target name="compile"
+          depends="init"
+          description="Compile sources"
+          if="hasclojure">
+    <java classname="clojure.lang.Compile">
+      <classpath>
+        <path location="${build.dir}"/>
+        <path location="${source.dir}"/>
+        <path location="${clojure.jar}"/>
+      </classpath>
+      <sysproperty key="clojure.compile.path" value="${build.dir}"/>
+      <arg value="decorate"/>
+    </java>
+  </target>
+
+  <target name="jar" description="Create jar file" depends="compile">
+    <jar jarfile="${decorate.jar}">
+      <fileset dir="${source.dir}" includes="**/*.clj"/>
+      <fileset dir="${build.dir}" includes="**/*.class"/>
+    </jar>
+  </target>
+</project>
