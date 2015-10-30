@@ -10,7 +10,7 @@
   "Macros for redefining functions with decorators.")
 
 (defmacro redef
-  "Redefine an existing value, keeping the metadata intact."
+  "Redefine an existing var, keeping the metadata intact."
   [name value]
   `(let [m# (meta #'~name)
          v# (def ~name ~value)]
